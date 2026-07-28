@@ -42,7 +42,7 @@ Clone the repository to your local machine.
 Run `npm run build`
 
 ## Contributing
-1. Fork the project from Github (https://github.com/CrazyJerrick/CrazyJerrick)
+1. Fork the project from Github (https://github.com/PhoebeJerrick/CrazyJerrick)
 2. Add your feature / fix
 3. Send a pull request
 
