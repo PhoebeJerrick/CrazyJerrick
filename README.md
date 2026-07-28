@@ -45,10 +45,11 @@ Run `npm run build`
 1. Fork the project from Github (https://github.com/CrazyJerrick/CrazyJerrick)
 2. Add your feature / fix
 3. Send a pull request
+
 ## Credits
-- Mustafa Onur Çelik (Author)  
-onurcelik.dev@gmail.com  
-https://github.com/onur-celik  
+- Jerrick Lee(Author)  
+li_yuchuan@hotmail.com  
+https://github.com/PhoebeJerrick
 
 ## License
 CrazyJerrick is released under the MIT License. 

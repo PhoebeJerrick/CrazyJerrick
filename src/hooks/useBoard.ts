@@ -12,6 +12,17 @@ import { Widget, WidgetInfo } from "../components/Board/Board";
 import { INITIAL_LAYOUT, INITIAL_WIDGETS } from "../constants/initials";
 import { useDashboard } from "./useDashboard";
 
+export const normalizeStoredBoardArray = <T>(
+    value: T[] | null | undefined,
+    fallback: T[]
+): T[] => {
+    if (Array.isArray(value)) {
+        return value;
+    }
+
+    return fallback;
+};
+
 export const useBoard = (): UseBoardMethods => {
     const dispatch = useDispatch();
     const { getLocalDashboards } = useDashboard();
@@ -34,14 +45,19 @@ export const useBoard = (): UseBoardMethods => {
     /// combines layouts and widgets by "i" and returns
     /// layout array
     const generateLayoutArray = (
-        _l: Layout[],
-        _w: Widget[]
+        _l: Layout[] | null | undefined,
+        _w: Widget[] | null | undefined
     ): Promise<WidgetInfo[]> => {
+        const safeLayout = normalizeStoredBoardArray(_l, INITIAL_LAYOUT);
+        const safeWidgets = normalizeStoredBoardArray(_w, INITIAL_WIDGETS);
+
         return new Promise((resolve) => {
             resolve(
-                _l.map((lo) => {
+                safeLayout.map((lo) => {
                     const { i } = lo;
-                    const widget_info = _w.find((w: Widget) => w.i === i);
+                    const widget_info = safeWidgets.find(
+                        (w: Widget) => w.i === i
+                    );
                     return { ...lo, ...widget_info };
                 }) as WidgetInfo[]
             );
@@ -76,12 +92,14 @@ export const useBoard = (): UseBoardMethods => {
     /// and sets the board
     const createLayout = async () => {
         if (activeDashboard === "home") {
-            let layout: Layout[] = await JSON.parse(
-                localStorage.getItem("layouts") as string
-            );
-            let widgets: WidgetInfo[] = await JSON.parse(
-                localStorage.getItem("widgets") as string
-            );
+            const storedLayout = localStorage.getItem("layouts");
+            const storedWidgets = localStorage.getItem("widgets");
+            let layout: Layout[] = storedLayout
+                ? await JSON.parse(storedLayout)
+                : INITIAL_LAYOUT;
+            let widgets: WidgetInfo[] = storedWidgets
+                ? await JSON.parse(storedWidgets)
+                : INITIAL_WIDGETS;
 
             const generatedLayout: Awaited<Promise<WidgetInfo[]>> =
                 await generateLayoutArray(layout, widgets);
@@ -105,12 +123,14 @@ export const useBoard = (): UseBoardMethods => {
 
     const deleteWidget = async (widgetId: string) => {
         if (activeDashboard === "home") {
-            let layouts: Layout[] = await JSON.parse(
-                localStorage.getItem("layouts") as string
-            );
-            let widgets: WidgetInfo[] = await JSON.parse(
-                localStorage.getItem("widgets") as string
-            );
+            const storedLayout = localStorage.getItem("layouts");
+            const storedWidgets = localStorage.getItem("widgets");
+            let layouts: Layout[] = storedLayout
+                ? await JSON.parse(storedLayout)
+                : INITIAL_LAYOUT;
+            let widgets: WidgetInfo[] = storedWidgets
+                ? await JSON.parse(storedWidgets)
+                : INITIAL_WIDGETS;
 
             const newLayouts = layouts.filter((ly) => ly.i !== widgetId && ly);
             const newWidgets = widgets.filter((wd) => wd.i !== widgetId && wd);
